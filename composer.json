@@ -1,0 +1,24 @@
+{
+  "name": "printi/cimpress-php-sdk",
+  "type": "library",
+  "description": "Cimpress API Wrapper",
+  "keywords": ["cimpress", "mcp", "pdf-processing", "prepress", "api"],
+  "homepage": "https://github.com/Printi/cimpress",
+  "license": "MIT",
+  "minimum-stability": "dev",
+  "authors": [
+    {
+      "name": "Tanuj Dave",
+      "email": "tanuj.dave@printi.com.br"
+    }
+  ],
+  "autoload": {
+    "psr-4": {
+      "Cimpress\\": "src/"
+    }
+  },
+  "require": {
+    "php": "^7.0",
+    "guzzlehttp/guzzle": ">=6.0"
+  }
+}
