@@ -82,7 +82,7 @@ class Cimpress
          */
         $this->authorize($arguments[0]);
 
-        $class = __NAMESPACE__ . '\\' . sprintf('Cimpress%s', ucfirst($name));
+        $class = __NAMESPACE__ . '\\Services\\' . sprintf('Cimpress%s', ucfirst($name));
 
         if (!class_exists($class)) {
             throw new \Exception('CLASS_NOT_FOUND');
