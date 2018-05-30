@@ -36,7 +36,7 @@ class CimpressPrepress extends BaseCimpress
 
         try {
             $response = $client->post(
-                "https://prepress.documents.cimpress.io/v2/file-prep?asynchronous=true&withoutRetry=true",
+                "https://prepress.documents.cimpress.io/v2/file-prep?asynchronous=true",
                 [
                     'headers' => [
                         'Authorization' => $this->getToken(true),

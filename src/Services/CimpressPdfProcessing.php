@@ -35,7 +35,7 @@ class CimpressPdfProcessing extends BaseCimpress
 
         try {
             $response = $client->post(
-                "https://pdf.prepress.documents.cimpress.io/v2/mergePages?asynchronous=true&withoutRetry=true",
+                "https://pdf.prepress.documents.cimpress.io/v2/mergePages?asynchronous=true",
                 [
                     'headers' => [
                         'Authorization' => $this->getToken(true),
