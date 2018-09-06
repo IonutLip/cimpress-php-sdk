@@ -2,6 +2,7 @@
 
 namespace Cimpress;
 
+use Cimpress\Cache\JwtToken\CacheJwtToken;
 use GuzzleHttp\Client;
 
 /**
@@ -9,12 +10,34 @@ use GuzzleHttp\Client;
  */
 class Cimpress
 {
-    const BASE_URL = 'https://cimpress.auth0.com/oauth/ro';
+    const TOKEN_DB_ID = 'cimpress';
+    const BASE_URL    = 'https://cimpress.auth0.com/oauth/ro';
 
     /**
-     * @var array $credentials The cimpress credentials
+     * @var array $config The cimpress configuration
+     *
+     * credentials:
+     *      username: "%env(CIMPRESS_USERNAME)%"
+     *       password: "%env(CIMPRESS_PASSWORD)%"
+     *      connection: 'CimpressADFS'
+     *       scope: 'openid name email'
+     *      api_type: 'app'
+     * api:
+     *      prepress:
+     *          filePrep:
+     *              ParameterUrl: 'https://s3.amazonaws.com/om2-files-dev/mcp/preflight/fileprep/xxxxxxxxxx.json'
+     * api_clients:
+     *      pdf_processing:
+     *          client_id: '*************'
+     *      prepress:
+     *          client_id: ''*************'
+     * jwtToken:
+     *      enableCaching: true
+     *      tokenTableName: 'jwt_token'
+     *      tokenExpireIn: 60         # in seconds
+     *
      */
-    private $credentials;
+    private $config;
 
     /**
      * @var string $token The authorize token
@@ -24,11 +47,11 @@ class Cimpress
     /**
      * Cimpress constructor.
      *
-     * @param array  $credentials The cimpress credentials
+     * @param array $config
      */
-    public function __construct(array $credentials)
+    public function __construct(array $config)
     {
-        $this->credentials = $credentials;
+        $this->config = $config;
     }
 
     /**
@@ -37,9 +60,21 @@ class Cimpress
      * @param string $clientId The client id
      *
      * @return $this
+     * @throws \Exception
      */
     protected function authorize(string $clientId)
     {
+        if (!isset($this->config['credentials'])) {
+            throw new \Exception('CIMPRESS_CREDENTIAL_MISSING');
+        }
+
+        if ($this->config['jwtToken']['enableCaching'] ?? false) {
+            if ($token = (new CacheJwtToken(self::TOKEN_DB_ID, $this->config['jwtToken']))->getCachedJwtAccessToken()) {
+                $this->token = $token;
+                return $this;
+            }
+        }
+
         $client      = new Client();
         $response    = $client->post(
             self::BASE_URL,
@@ -48,11 +83,15 @@ class Cimpress
                     [
                         'client_id' => $clientId,
                     ],
-                    $this->credentials
+                    $this->config['credentials']
                 ),
             ]
         );
         $this->token = json_decode($response->getBody())->id_token;
+
+        if ($this->config['jwtToken']['enableCaching'] ?? false) {
+            (new CacheJwtToken(self::TOKEN_DB_ID, $this->config['jwtToken']))->updateDbJwtAccessToken($this->token);
+        }
 
         return $this;
     }
