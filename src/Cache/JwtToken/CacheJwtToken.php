@@ -247,7 +247,7 @@ class CacheJwtToken
                 $credentials['host'],
                 $credentials['port'],
                 $credentials['db']
-            ), $credentials['username'], $credentials['username']
+            ), $credentials['username'], $credentials['password']
         );
     }
 
