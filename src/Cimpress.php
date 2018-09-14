@@ -10,8 +10,15 @@ use GuzzleHttp\Client;
  */
 class Cimpress
 {
-    const TOKEN_DB_ID = 'cimpress';
-    const BASE_URL    = 'https://cimpress.auth0.com/oauth/ro';
+    const CLIENT_PREPRESS       = 'prepress';
+    const CLIENT_PDF_PROCESSING = 'pdfProcessing';
+
+    const BASE_URL = 'https://cimpress.auth0.com/oauth/ro';
+
+    const TOKEN_DB_ID = [
+        self::CLIENT_PREPRESS       => 'cimpress_prepress',
+        self::CLIENT_PDF_PROCESSING => 'cimpress_pdf_processing',
+    ];
 
     /**
      * @var array $config The cimpress configuration
@@ -45,6 +52,11 @@ class Cimpress
     private $token;
 
     /**
+     * @var string $clientName The client name prepress|pdf_processing
+     */
+    private $clientName;
+
+    /**
      * Cimpress constructor.
      *
      * @param array $config
@@ -69,7 +81,7 @@ class Cimpress
         }
 
         if ($this->config['jwtToken']['enableCaching'] ?? false) {
-            if ($token = (new CacheJwtToken(self::TOKEN_DB_ID, $this->config['jwtToken']))->getCachedJwtAccessToken()) {
+            if ($token = (new CacheJwtToken(self::TOKEN_DB_ID[$this->clientName], $this->config['jwtToken']))->getCachedJwtAccessToken()) {
                 $this->token = $token;
                 return $this;
             }
@@ -90,7 +102,7 @@ class Cimpress
         $this->token = json_decode($response->getBody())->id_token;
 
         if ($this->config['jwtToken']['enableCaching'] ?? false) {
-            (new CacheJwtToken(self::TOKEN_DB_ID, $this->config['jwtToken']))->updateDbJwtAccessToken($this->token);
+            (new CacheJwtToken(self::TOKEN_DB_ID[$this->clientName], $this->config['jwtToken']))->updateDbJwtAccessToken($this->token);
         }
 
         return $this;
@@ -114,6 +126,8 @@ class Cimpress
         if (!isset($arguments[0]) && 'string' === gettype($arguments[0])) {
             throw new \Exception('INVALID_ARGUMENT');
         }
+
+        $this->clientName = $name;
 
         /**
          * Authorize Cimpress api
