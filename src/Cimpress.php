@@ -4,6 +4,7 @@ namespace Cimpress;
 
 use Cimpress\Cache\JwtToken\CacheJwtToken;
 use GuzzleHttp\Client;
+use Psr\Log\LoggerInterface;
 
 /**
  * Class Cimpress
@@ -57,13 +58,20 @@ class Cimpress
     private $clientName;
 
     /**
+     * @var LoggerInterface
+     */
+    private $logger;
+
+    /**
      * Cimpress constructor.
      *
-     * @param array $config
+     * @param array           $config
+     * @param LoggerInterface $logger
      */
-    public function __construct(array $config)
+    public function __construct(array $config, LoggerInterface $logger)
     {
         $this->config = $config;
+        $this->logger = $logger;
     }
 
     /**
@@ -87,19 +95,22 @@ class Cimpress
             }
         }
 
+        $options = [
+            'form_params' => array_merge(
+                [
+                    'client_id' => $clientId,
+                ],
+                $this->config['credentials']
+            ),
+        ];
         $client      = new Client();
-        $response    = $client->post(
-            self::BASE_URL,
-            [
-                'form_params' => array_merge(
-                    [
-                        'client_id' => $clientId,
-                    ],
-                    $this->config['credentials']
-                ),
-            ]
-        );
+        $response    = $client->post(self::BASE_URL, $options);
         $this->token = json_decode($response->getBody())->id_token;
+        $this->logger->info('Cimpress authorization', [
+            'url' => self::BASE_URL,
+            'request' => $options,
+            'response' => $response->getBody()->getContents(),
+        ]);
 
         if ($this->config['jwtToken']['enableCaching'] ?? false) {
             (new CacheJwtToken(self::TOKEN_DB_ID[$this->clientName], $this->config['jwtToken']))->updateDbJwtAccessToken($this->token);
@@ -141,6 +152,6 @@ class Cimpress
             throw new \Exception('CLASS_NOT_FOUND');
         }
 
-        return new $class($this->token);
+        return new $class($this->token, $this->logger);
     }
 }
