@@ -7,6 +7,8 @@ namespace Cimpress\Services;
  */
 class CimpressPdfProcessing extends BaseCimpress
 {
+    const MERGE_PAGES_URL = 'https://pdf.prepress.documents.cimpress.io/v2/mergePages?asynchronous=true';
+
     /**
      * Merge multiple PDFs into a single PDF
      *
@@ -19,10 +21,13 @@ class CimpressPdfProcessing extends BaseCimpress
     public function mergePages(array $pdfUrls, string $callbackUrl = ''): array
     {
         return $this->requestJson(
-            'https://pdf.prepress.documents.cimpress.io/v2/mergePages?asynchronous=true',
+            'POST',
+            self::MERGE_PAGES_URL,
             [
-                'PdfUrls' => $pdfUrls,
-                'CallbackUrl' => $callbackUrl,
+                'json' => [
+                    'PdfUrls'     => $pdfUrls,
+                    'CallbackUrl' => $callbackUrl,
+                ],
             ]
         );
     }
