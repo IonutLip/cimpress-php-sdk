@@ -13,7 +13,7 @@ class CacheDatabaseTest extends TestCase
         'databaseDsn'    => 'sqlite::memory:',
     ];
 
-    public function setUp(): void
+    public function setUp()
     {
         if (!extension_loaded('pdo_sqlite')) {
             $this->markTestSkipped(sprintf('%s requires sqlite support', __CLASS__));

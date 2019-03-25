@@ -15,7 +15,7 @@ use Psr\Log\LoggerInterface;
 
 class CimpressAuthV2Test extends TestCase
 {
-    public function setUp(): void
+    public function setUp()
     {
         CacheMemory::clear();
     }
@@ -55,7 +55,7 @@ class CimpressAuthV2Test extends TestCase
         $this->assertEquals('POST', $history[0]['request']->getMethod());
         $this->assertEquals(['application/x-www-form-urlencoded'], $history[0]['request']->getHeader('Content-Type'));
         parse_str($history[0]['request']->getBody()->getContents(), $params);
-        $this->assertEquals(['client_id' => 'clientid', 'client_secret' => 'mysecret'], $params);
+        $this->assertEquals(['client_id' => 'clientid', 'client_secret' => 'mysecret', 'grant_type' => 'client_credentials', 'audience' => 'https://api.cimpress.io/'], $params);
 
         // POST to send 1st request
         $this->assertEquals('POST', $history[1]['request']->getMethod());
@@ -113,7 +113,7 @@ class CimpressAuthV2Test extends TestCase
         $this->assertEquals('POST', $history[0]['request']->getMethod());
         $this->assertEquals(['application/x-www-form-urlencoded'], $history[0]['request']->getHeader('Content-Type'));
         parse_str($history[0]['request']->getBody()->getContents(), $params);
-        $this->assertEquals(['client_id' => 'clientid', 'client_secret' => 'mysecret'], $params);
+        $this->assertEquals(['client_id' => 'clientid', 'client_secret' => 'mysecret', 'grant_type' => 'client_credentials', 'audience' => 'https://api.cimpress.io/'], $params);
 
         // POST to send the request
         $this->assertEquals('POST', $history[1]['request']->getMethod());
@@ -125,7 +125,7 @@ class CimpressAuthV2Test extends TestCase
         $this->assertEquals('POST', $history[2]['request']->getMethod());
         $this->assertEquals(['application/x-www-form-urlencoded'], $history[2]['request']->getHeader('Content-Type'));
         parse_str($history[2]['request']->getBody()->getContents(), $params);
-        $this->assertEquals(['client_id' => 'clientid', 'client_secret' => 'mysecret'], $params);
+        $this->assertEquals(['client_id' => 'clientid', 'client_secret' => 'mysecret', 'grant_type' => 'client_credentials', 'audience' => 'https://api.cimpress.io/'], $params);
 
         // POST to send a new request
         $this->assertEquals('POST', $history[3]['request']->getMethod());

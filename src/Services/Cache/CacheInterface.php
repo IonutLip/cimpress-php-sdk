@@ -35,7 +35,7 @@ interface CacheInterface
      * @param int $ttl Time to live (use 0 to not expire the data)
      * @return void
      */
-    public function store(string $id, $value, int $ttl = 0): void;
+    public function store(string $id, $value, int $ttl = 0);
 
     /**
      * Check whether the cache is enabled or not

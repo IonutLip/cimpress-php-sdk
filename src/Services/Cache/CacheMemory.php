@@ -40,7 +40,7 @@ class CacheMemory implements CacheInterface
      *
      * @return void
      */
-    public static function clear(): void
+    public static function clear()
     {
         static::$data = [];
     }
@@ -89,7 +89,7 @@ class CacheMemory implements CacheInterface
      * @param int $ttl Time to live (use 0 to not expire the data)
      * @return void
      */
-    public function store(string $id, $value, int $ttl = 0): void
+    public function store(string $id, $value, int $ttl = 0)
     {
         if (!$this->isCachingEnabled()) {
             return;

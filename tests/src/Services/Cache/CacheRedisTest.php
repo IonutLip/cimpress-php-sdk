@@ -14,7 +14,7 @@ class CacheRedisTest extends TestCase
         'database'      => 5,
     ];
 
-    public function setUp(): void
+    public function setUp()
     {
         if (!extension_loaded('redis')) {
             $this->markTestSkipped(sprintf('%s requires redis extension', __CLASS__));

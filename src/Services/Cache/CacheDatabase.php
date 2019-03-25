@@ -94,7 +94,7 @@ class CacheDatabase implements CacheInterface
      * @param int $ttl
      * @return void
      */
-    public function store(string $cacheId, $accessToken, int $ttl = 0): void
+    public function store(string $cacheId, $accessToken, int $ttl = 0)
     {
         $sql = sprintf(
             'REPLACE INTO `%s` (id, access_token) VALUES (:id, :token)',
@@ -105,7 +105,7 @@ class CacheDatabase implements CacheInterface
                 ->prepare($sql)
                 ->execute([
                     ':id'    => $cacheId,
-                    ':token' => $accessToken,
+                    ':token' => serialize($accessToken),
                 ]);
 
         } catch (\PDOException $e) {
@@ -129,13 +129,17 @@ class CacheDatabase implements CacheInterface
     /**
      * Decode|deserialize jwt access token
      *
-     * @param string $token
+     * @param mixed $token
      *
      * @return mixed
      * @throws \Exception
      */
-    private function decodeToken(string $token)
+    private function decodeToken($token)
     {
+        if (is_object($token) && property_exists($token, 'accessToken')) {
+            $token = $token->accessToken;
+        }
+
         $tokenParts = explode('.', $token);
 
         if (count($tokenParts) !== 3) {
@@ -148,9 +152,9 @@ class CacheDatabase implements CacheInterface
     /**
      * Select access token from jwt
      * @param string $cacheId
-     * @return string|bool
+     * @return mixed|bool
      */
-    private function selectJwtToken(string $cacheId): string
+    private function selectJwtToken(string $cacheId)
     {
         $sql = sprintf(
             'SELECT access_token FROM `%s` WHERE id = :id',
@@ -162,7 +166,11 @@ class CacheDatabase implements CacheInterface
             $stmt->execute([':id' => $cacheId]);
             $record = $stmt->fetch();
 
-            return $record['access_token'] ?? false;
+            if (!isset($record['access_token'])) {
+                return false;
+            }
+
+            return unserialize($record['access_token']);
         } catch (\Exception $e) {
             return false;
         }

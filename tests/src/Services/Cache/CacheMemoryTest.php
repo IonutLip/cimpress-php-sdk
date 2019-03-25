@@ -11,7 +11,7 @@ class CacheMemoryTest extends TestCase
         'enableCaching' => true,
     ];
 
-    public function setUp(): void
+    public function setUp()
     {
         CacheMemory::clear();
     }
