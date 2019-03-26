@@ -15,7 +15,7 @@ use Psr\Log\LoggerInterface;
 
 class CimpressAuthV1Test extends TestCase
 {
-    public function setUp(): void
+    public function setUp()
     {
         CacheMemory::clear();
     }

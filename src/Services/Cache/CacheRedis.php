@@ -41,7 +41,7 @@ class CacheRedis implements CacheInterface
      *
      * @return void
      */
-    public function clear(): void
+    public function clear()
     {
         if (!$this->isCachingEnabled()) {
             return;
@@ -94,7 +94,7 @@ class CacheRedis implements CacheInterface
      * @param int $ttl Time to live (use 0 to not expire the data)
      * @return void
      */
-    public function store(string $id, $value, int $ttl = 0): void
+    public function store(string $id, $value, int $ttl = 0)
     {
         if (!$this->isCachingEnabled()) {
             return;
@@ -138,7 +138,7 @@ class CacheRedis implements CacheInterface
      *
      * @return void
      */
-    private function connect(): void
+    private function connect()
     {
         $redis = new \Redis();
 
@@ -155,6 +155,8 @@ class CacheRedis implements CacheInterface
         if (!$redis->select($this->config['database'])) {
             throw new \Exception('Failed to select database in redis');
         }
+        $redis->setOption(\Redis::OPT_SERIALIZER, \Redis::SERIALIZER_PHP);
+
         $this->redis = $redis;
     }
 }

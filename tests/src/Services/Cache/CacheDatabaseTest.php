@@ -2,6 +2,7 @@
 
 namespace Tests\Cimpress\Services\Cache;
 
+use Cimpress\Entity\AuthToken;
 use Cimpress\Services\Cache\CacheDatabase;
 use PHPUnit\Framework\TestCase;
 
@@ -13,7 +14,7 @@ class CacheDatabaseTest extends TestCase
         'databaseDsn'    => 'sqlite::memory:',
     ];
 
-    public function setUp(): void
+    public function setUp()
     {
         if (!extension_loaded('pdo_sqlite')) {
             $this->markTestSkipped(sprintf('%s requires sqlite support', __CLASS__));
@@ -28,7 +29,7 @@ class CacheDatabaseTest extends TestCase
         // Prepare
         $key   = 'foo';
         $ttl   = 10;
-        $value = $this->buildJWT('bar', $ttl);
+        $value = new AuthToken('Bearer', $this->buildJWT('bar', $ttl), $ttl);
 
         // Execute
         $cache = new CacheDatabase(static::$config);
@@ -51,7 +52,7 @@ class CacheDatabaseTest extends TestCase
         // Prepare
         $key   = 'foo';
         $ttl   = 1;
-        $value = $this->buildJWT('bar', $ttl);
+        $value = new AuthToken('Bearer', $this->buildJWT('bar', $ttl), $ttl);
 
         $cache = new CacheDatabase(static::$config);
         $cache->store($key, $value, $ttl);

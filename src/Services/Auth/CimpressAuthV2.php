@@ -35,6 +35,8 @@ class CimpressAuthV2 extends BaseAuth
         $params = [
             'client_id'     => $credentials[0],
             'client_secret' => $credentials[1],
+            'grant_type'    => 'client_credentials',
+            'audience'      => 'https://api.cimpress.io/',
         ];
         $options = ['form_params' => $params];
 
