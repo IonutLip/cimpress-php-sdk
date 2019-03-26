@@ -2,6 +2,7 @@
 
 namespace Tests\Cimpress\Services\Cache;
 
+use Cimpress\Entity\AuthToken;
 use Cimpress\Services\Cache\CacheMemory;
 use PHPUnit\Framework\TestCase;
 
@@ -23,7 +24,7 @@ class CacheMemoryTest extends TestCase
     {
         // Prepare
         $key   = 'foo';
-        $value = 'bar';
+        $value = new AuthToken('Bearer', 'bar', 10);
 
         // Execute
         $cache = new CacheMemory(static::$config);

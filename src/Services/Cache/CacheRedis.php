@@ -155,6 +155,8 @@ class CacheRedis implements CacheInterface
         if (!$redis->select($this->config['database'])) {
             throw new \Exception('Failed to select database in redis');
         }
+        $redis->setOption(\Redis::OPT_SERIALIZER, \Redis::SERIALIZER_PHP);
+
         $this->redis = $redis;
     }
 }

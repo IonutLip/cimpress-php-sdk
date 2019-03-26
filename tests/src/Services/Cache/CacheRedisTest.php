@@ -2,6 +2,7 @@
 
 namespace Tests\Cimpress\Services\Cache;
 
+use Cimpress\Entity\AuthToken;
 use Cimpress\Services\Cache\CacheRedis;
 use PHPUnit\Framework\TestCase;
 
@@ -32,7 +33,7 @@ class CacheRedisTest extends TestCase
     {
         // Prepare
         $key   = 'foo';
-        $value = 'bar';
+        $value = new AuthToken('Bearer', 'bar', 10);
 
         // Execute
         $cache = new CacheRedis(static::$config);
